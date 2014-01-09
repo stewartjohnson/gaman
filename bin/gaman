@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require 'gaman'
+
+puts "It's installed and running and it's executable."
