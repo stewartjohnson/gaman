@@ -15,6 +15,8 @@ module Gaman
         welcome_win.setpos 0, 0
         welcome_win.addstr text
         welcome_win.refresh
+        welcome_win.timeout = 0
+        welcome_win.keypad = true
         refresh
       end
     end
@@ -26,7 +28,9 @@ module Gaman
         addstr " "*maxx
         setpos 0, 1
         addstr "Gaman v#{Gaman::VERSION}"
-        attrset(Curses::A_NORMAL)      
+        attrset(Curses::A_NORMAL)  
+        self.timeout = 0  
+        self.keypad = true  
         refresh
       end
     end
@@ -49,6 +53,10 @@ To get started you'll need an account on FIBS (fibs.com).
 
 Please enter your account details below.
 (These will be stored in plaintext in $HOME/.gamanrc).}
+          # (0..20).to_a.each do |i|
+          #   display_message "The counter is now [#{i}]."
+          #   sleep 1
+          # end
         when :debug
           display_message "The result was [#{command[:value]}]"
         end

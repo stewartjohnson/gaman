@@ -10,6 +10,8 @@ module Gaman
 
     def setup
       @mutex.synchronize { 
+        self.timeout = 0 # ms to block on each read
+        self.keypad = true
         attrset Curses::A_REVERSE
         setpos 0, 0
         addstr " "*maxx
@@ -22,8 +24,8 @@ module Gaman
       @mutex.synchronize do
         attrset Curses::A_REVERSE
         setpos 0, 0
-        addstr text
-        attrset(Curses::A_NORMAL) 
+        addstr text + " "*(maxx-text.size)
+        attrset Curses::A_NORMAL
         refresh 
       end
     end
@@ -61,6 +63,9 @@ module Gaman
 
     def clear
       @mutex.synchronize do 
+        # attrset Curses::A_REVERSE
+        # setpos 0, 0
+        # addstr " "*maxx
         attrset Curses::A_NORMAL
         setpos 1, 0 # start of first line under status bar
         clrtoeol
@@ -89,6 +94,35 @@ module Gaman
           end
           break if char 
         end
+        case char
+        when 10
+          logger.debug {"ENTER detected"}
+        when 27
+          logger.debug {"ESCAPE detected"}
+          return nil
+        when 127
+          logger.debug {"BACKSPACE detected"}
+          next
+        when Curses::Key::BACKSPACE
+          logger.debug {"BACKSPACE detected through Curses."}
+          next
+        when 330
+          logger.debug {"DELETE detected"}
+          next
+        when Curses::Key::LEFT
+          logger.debug {"LEFT detected through Curses."}
+          next
+        when Curses::Key::RIGHT
+          logger.debug {"RIGHT detected through Curses."}
+          next
+        when Curses::Key::UP
+          logger.debug {"UP detected through Curses."}
+          next
+        when Curses::Key::DOWN
+          logger.debug {"DOWN detected through Curses."}
+          next
+        end
+        logger.debug "Received key. [#{char}] Ord: [#{char[0].ord}] Int: [#{char[0].to_i}]"
         break if char == 10
         addch char
         result += char
@@ -109,6 +143,7 @@ module Gaman
         when :status
           display_prompt command[:message]
         when :commands 
+          display_prompt "Please select a command:"
           output_queue << choose_command(command[:commands])
         when :get_string
           display_prompt command[:prompt]
