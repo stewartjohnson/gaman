@@ -102,6 +102,10 @@ module Gaman
           return nil
         when 127
           logger.debug {"BACKSPACE detected"}
+          setpos cury, curx-1
+          addch " "
+          setpos cury, curx-1
+          result = result[0..-2]
           next
         when Curses::Key::BACKSPACE
           logger.debug {"BACKSPACE detected through Curses."}
