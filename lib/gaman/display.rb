@@ -1,7 +1,11 @@
 require 'curses'
+require 'gaman/logging'
 
 module Gaman
   class Display < Curses::Window
+
+    include Logging
+
     @mutex = nil
 
     def display_message text
@@ -11,6 +15,7 @@ module Gaman
         welcome_win.setpos 0, 0
         welcome_win.addstr text
         welcome_win.refresh
+        refresh
       end
     end
 
@@ -27,6 +32,7 @@ module Gaman
     end
 
     def run mutex, input_queue
+      logger.debug { "Starting up display" }
       @mutex = mutex
       setup
       running = true
