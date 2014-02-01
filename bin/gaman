@@ -2,10 +2,12 @@
 
 require 'gaman'
 require 'gaman/controller'
-require 'gaman/console_user_interface'
+require 'i18n'
 
-Thread.current[:name] = 'main'
-ui = Gaman::ConsoleUserInterface.new
-controller = Gaman::Controller.new ui
-controller.run
+I18n.load_path = Dir[File.expand_path('../../config/locales/*.yml', __FILE__)]
+I18n.enforce_available_locales = false
+
+Gaman::Controller.new.run
+
+puts I18n.t(:exit_message)
 

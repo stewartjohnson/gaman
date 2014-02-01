@@ -6,7 +6,6 @@ module Gaman
       Logging.logger
     end
 
-
     def self.logger
       @logger ||= Logger.new("logging-#{Thread.current[:name]}.log")
     end
