@@ -6,5 +6,10 @@ module Gaman
         ).each_with_index do |prompt,i|
       const_set(prompt.capitalize, i)
     end
+
+    def self.text id
+      name = constants.find{ |name| const_get(name)==id }
+      I18n.t("prompts.#{name.downcase}")
+    end
   end
 end

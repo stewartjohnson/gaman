@@ -19,3 +19,6 @@ en:
     shout:
       key: S
       label: Shout Message
+  prompts:
+    username: Please enter your FIBS username
+    password: Please enter your FIBS password

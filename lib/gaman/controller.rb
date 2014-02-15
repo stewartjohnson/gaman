@@ -10,15 +10,20 @@ module Gaman
 
     def run
 
+      logger.debug { "controller: gaman controller starting" }
       Gaman::ConsoleUserInterface.use do |ui|
         loop do
           ui.display Screen::Login
-          ui.commands Command::Quit, Command::Login
-          cmd = ui.wait_for_command
+          ui.set_commands Command::Quit, Command::Login
+          cmd = ui.get_command(true)
           break if cmd == Command::Quit
+          ui.set_prompt Prompt::Username
+          username = ui.get_text(true)
+          ui.set_prompt Prompt::Password
+          password = ui.get_text(true)
+          logger.debug { "received credentials: #{username}/#{password}"}
 
-          # username = ui.prompt Prompt::Username
-          # password = ui.prompt Prompt::Password
+
           # ui.status Status::AttemptingConnection
           # Fibs.use(:username => username, :password => password) do |fibs|
           #   if fibs.connected?
