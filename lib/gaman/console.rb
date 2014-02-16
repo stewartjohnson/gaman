@@ -6,6 +6,14 @@ module Gaman
 
   class Console < Curses::Window
 
+    module Error
+      class CancelInput < StandardError
+        def message
+          "User cancelled input"
+        end
+      end
+    end
+
     include Logging
 
     def setup
@@ -35,6 +43,9 @@ module Gaman
     end
 
     def clear
+      attrset Curses::A_REVERSE
+      setpos 0, 0
+      addstr " "*maxx
       attrset Curses::A_NORMAL
       setpos 1, 0 # start of first line under status bar
       clrtoeol
@@ -51,9 +62,14 @@ module Gaman
         # convert the char to the Command
         logger.debug { "console: received command key #{char}"}
         cmd = Command.from_key(char)
-        @ui_mode = ConsoleMode::None
-        logger.debug { "console: command received was #{cmd.nil? ? 'not valid' : cmd}"}
-        cmd
+        if cmd.nil?
+          logger.debug { "console: command received was not valid"}
+          nil
+        else
+          @ui_mode = ConsoleMode::None
+          logger.debug { "console: command received was #{cmd}"}
+          cmd
+        end
       end
     end
 
@@ -69,10 +85,6 @@ module Gaman
     end
 
     def get_text
-      # return nil if the user hits ESC
-      # need to set the location of the cursor and show it
-      # need to echo the characters that are being typed (manually - noecho should remain on)
-      # need to support arrow keys and delete properly
 
       return nil unless @ui_mode == ConsoleMode::Text
 
@@ -86,16 +98,17 @@ module Gaman
         logger.debug {"Received key. [#{char}] Ord: [#{char[0].ord}] Int: [#{char[0].to_i}]"} 
 
         case char
+        when 3
+          logger.debug { "Received Ctrl-C"}
+          @ui_mode = ConsoleMode::None
+          raise Error::CancelInput
         when 10
           logger.debug {"ENTER detected"}
           complete_string = true
         when 27
           logger.debug {"ESCAPE detected"}
-          raise NotImplementedError "Escape not implemented yet."
-          return nil # TODO - this won't work any more
         when 127
           logger.debug {"BACKSPACE detected"}
-          # TODO check for @result.size > 0
           setpos cury, curx-1
           addch " "
           setpos cury, curx-1

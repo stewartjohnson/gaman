@@ -111,11 +111,12 @@ module Gaman
             @display.screen task[:value]
           when :commands
             logger.debug { "commands provided for display"}
+            @console.clear
             @console.commands task[:value]
           when :prompt
             logger.debug { "settting the console prompt" }
-            @console.display_prompt task[:value]
             @console.clear
+            @console.display_prompt task[:value]
           else
             raise ArgumentError, "task type of #{task[:type]} not supported by UI"
           end
@@ -126,11 +127,15 @@ module Gaman
           logger.debug { "CUI run thread: received cmd #{cmd}"}
           @output_queue << cmd
         end
-        
+
         ## check to see if a string has been entered
-        if text = @console.get_text # non-blocking
-          logger.debug { "CUI run thread: received text #{text}" }
-          @output_queue << text
+        begin
+          if text = @console.get_text # non-blocking
+            logger.debug { "CUI run thread: received text #{text}" }
+            @output_queue << text
+          end
+        rescue Gaman::Console::Error::CancelInput
+          @output_queue << nil
         end
       end
     end

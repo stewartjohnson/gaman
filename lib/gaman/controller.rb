@@ -19,8 +19,10 @@ module Gaman
           break if cmd == Command::Quit
           ui.set_prompt Prompt::Username
           username = ui.get_text(true)
+          next if username.nil?
           ui.set_prompt Prompt::Password
           password = ui.get_text(true)
+          next if password.nil?
           logger.debug { "received credentials: #{username}/#{password}"}
 
 
