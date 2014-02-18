@@ -81,13 +81,12 @@ module Gaman
     end
 
     def run
-      logger.debug { 'console ui: separate run thread starting' }
       loop do
         # the run loop never blocks -- the UI is refreshed and read for UI
         # continuously as fast as possible.
 
         ## first check for a new task to execute
-        task = @input_queue.pop(true) rescue nil # rubocop:disable RescueModifier LineLength
+        task = @input_queue.pop(true) rescue nil # rubocop:disable RescueModifier, LineLength
         if task
           case task[:type]
           when :display # change the display
@@ -106,18 +105,28 @@ module Gaman
           end
         end
 
-        ## check to see if a command was entered
-        cmd = @console.read_command # non-blocking
-        @output_queue << cmd if cmd
-
-        ## check to see if a string has been entered
-        begin
-          text = @console.get_text # non-blocking
-          @output_queue << text if text # FIXME: can get rid of this exception -- use false
-        rescue Gaman::Console::Error::CancelInput
-          @output_queue << nil
-        end
+        receive_command
+        receive_text
       end
+    end
+
+    private
+
+    def receive_command
+      ## check to see if a command was entered
+      cmd = @console.read_command # non-blocking
+      @output_queue << cmd if cmd
+    end
+
+    def receive_text
+      ## check to see if a string has been entered
+      # non-blocking - returns:
+      #  - nil if nothing ready yet
+      #  - false if the user cancelled
+      #  - a string if the user entered some text
+      val = @console.text
+      @output_queue << val if val # it's a string
+      @output_queue << nil if !val.nil? && !val
     end
   end
 end

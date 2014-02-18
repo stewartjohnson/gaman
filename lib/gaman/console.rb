@@ -11,13 +11,6 @@ module Gaman
 
   # Internal: Implements the console portion of the CLI.
   class Console < Curses::Window
-    module Error
-      class CancelInput < StandardError
-        def message
-          'User cancelled input'
-        end
-      end
-    end
 
     include Logging
 
@@ -89,7 +82,7 @@ module Gaman
       refresh
     end
 
-    def get_text
+    def text
       return nil unless @ui_mode == ConsoleMode::Text
 
       complete_string = false
@@ -99,13 +92,13 @@ module Gaman
       Curses.curs_set 0
 
       if char
-        logger.debug { "Received key. [#{char}] Ord: [#{char[0].ord}] Int: [#{char[0].to_i}]" }
+        logger.debug { "Received key. [#{char}] Ord: [#{char[0].ord}] Int: [#{char[0].to_i}]" } # rubocop:disable LineLength
 
         case char
         when 3
           logger.debug { 'Received Ctrl-C' }
           @ui_mode = ConsoleMode::None
-          fail Error::CancelInput
+          return false
         when 10
           logger.debug { 'ENTER detected' }
           complete_string = true
