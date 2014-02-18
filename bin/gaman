@@ -10,4 +10,3 @@ I18n.enforce_available_locales = false
 Gaman::Controller.new.run
 
 puts I18n.t(:exit_message)
-
