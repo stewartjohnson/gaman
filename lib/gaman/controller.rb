@@ -15,13 +15,13 @@ module Gaman
         loop do
           ui.display Screen::LOGIN
           # TODO: constants should be CAPS
-          ui.set_commands Command::Quit, Command::Login
+          ui.set_commands Command::QUIT, Command::LOGIN
           cmd = ui.get_command(true)
-          break if cmd == Command::Quit
-          ui.set_prompt Prompt::Username
+          break if cmd == Command::QUIT
+          ui.set_prompt Prompt::USERNAME
           username = ui.get_text(true)
           next if username.nil?
-          ui.set_prompt Prompt::Password
+          ui.set_prompt Prompt::PASSWORD
           password = ui.get_text(true)
           next if password.nil?
           logger.debug { "received credentials: #{username}/#{password}" }
@@ -29,12 +29,13 @@ module Gaman
           # ui.status Status::AttemptingConnection
           Gaman::Fibs.use(username: username, password: password) do |fibs|
             if fibs.connect
-              ui.status Status::ConnectedSuccessfully
+              ui.status Status::CONNECTED_SUCCESSFULLY
             else
-              ui.display Screen::ConnectionError # TODO: error details inserted
+              # TODO: error details inserted
+              ui.display Screen::CONNECTION_ERROR
               next # back to login screen
             end
-          #   ui.commands Command::Quit, Command::Filter
+          #   ui.commands Command::QUIT, Command::FILTER
           #   cmd = nil
           #   while cmd.nil? do
           #     ui.display Screen::PlayerList, fibs.player_list

@@ -26,17 +26,13 @@ module Gaman
     end
 
     def close
-      # cleanup
       Curses.close_screen
     end
 
     def initialize
-      # these don't need to be seen by users of this class.
-      # the queues are an internal implementation.
       @input_queue = Queue.new
       @output_queue = Queue.new
 
-      logger.debug { 'Starting.' }
       init_curses
 
       @display = Display.new Curses.lines - 3, Curses.cols, 0, 0
@@ -46,7 +42,6 @@ module Gaman
     end
 
     def init_curses
-      logger.debug 'Initialising curses'
       Curses.init_screen
       if Curses.lines < MIN_ROWS || Curses.cols < MIN_COLS
         fail ArgumentError, I18n.t(:screen_size_error)

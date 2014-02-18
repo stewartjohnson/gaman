@@ -8,7 +8,7 @@ module Gaman
         shout
         message
         ).each_with_index do |name, i|
-      const_set(name.capitalize, i)
+      const_set(name.upcase, i)
     end
 
     def self.key(cmd)

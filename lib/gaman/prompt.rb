@@ -6,7 +6,7 @@ module Gaman
     %w( username
         password
         ).each_with_index do |prompt, i|
-      const_set(prompt.capitalize, i)
+      const_set(prompt.upcase, i)
     end
 
     def self.text(id)
