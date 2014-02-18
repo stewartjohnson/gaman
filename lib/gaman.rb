@@ -1,5 +1,7 @@
 require 'gaman/version'
 
+# Public: Gaman is a gem for interacting with the First Internet
+# Backgammon Server (FIBS).
 module Gaman
-  # Your code goes here...
+  # nop
 end

@@ -15,14 +15,14 @@ module Gaman
         loop do
           ui.display Screen::LOGIN
           # TODO: constants should be CAPS
-          ui.set_commands Command::QUIT, Command::LOGIN
-          cmd = ui.get_command(true)
+          ui.enter_command_mode Command::QUIT, Command::LOGIN
+          cmd = ui.command(true)
           break if cmd == Command::QUIT
-          ui.set_prompt Prompt::USERNAME
-          username = ui.get_text(true)
+          ui.enter_text_mode Prompt::USERNAME
+          username = ui.text(true)
           next if username.nil?
-          ui.set_prompt Prompt::PASSWORD
-          password = ui.get_text(true)
+          ui.enter_text_mode Prompt::PASSWORD
+          password = ui.text(true)
           next if password.nil?
           logger.debug { "received credentials: #{username}/#{password}" }
 

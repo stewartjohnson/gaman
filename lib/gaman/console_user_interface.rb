@@ -58,22 +58,22 @@ module Gaman
       @input_queue << { type: :display, value: screen_id }
     end
 
-    def set_commands(*command_list)
+    def enter_command_mode(*command_list)
       @input_queue << { type: :commands, value: command_list }
     end
 
-    def get_command(block = false)
+    def command(block = false)
       logger.debug { "waiting cmd: #{block ? "blocking" : "not blocking"}" }
       # TODO: check to see what is on the queue -- command or string?
       return nil if !block && @output_queue.empty?
       @output_queue.pop # blocks
     end
 
-    def set_prompt(prompt_id)
+    def enter_text_mode(prompt_id)
       @input_queue << { type: :prompt, value: prompt_id }
     end
 
-    def get_text(block = false)
+    def text(block = false)
       logger.debug { "waiting text: #{block ? "blocking" : "not blocking"}" }
       # TODO: check to see what is on the queue -- command or string?
       return nil if !block && @output_queue.empty?
