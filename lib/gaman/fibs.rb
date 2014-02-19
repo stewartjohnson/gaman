@@ -1,4 +1,6 @@
 require 'gaman/logging'
+require 'gaman/state'
+require 'gaman/message_factory'
 require 'net/telnet'
 
 module Gaman
@@ -22,9 +24,8 @@ module Gaman
       Thread.kill fibs.read_thread
     end
 
-    def initialize(options)
-      @username = options[:username]
-      @password = options[:password]
+    def initialize(user_options)
+      @state = Gaman::State.new(user_options)
       @connection = begin
                       Net::Telnet.new 'Host' => 'fibs.com',
                                       'Port' => 4321,
@@ -38,12 +39,20 @@ module Gaman
     def connect
       return false if @connection.nil?
       # TODO: can we signal from the read thread to here?
-      @connection.puts("login Gaman 1008 #{@username} #{@password}")
+      @connection.puts("login Gaman 1008 #{@state.user(:username)} #{@state.user(:password)}")
       @connected = true
     end
 
     def connected?
       !@connection.nil? && @connected
+    end
+
+    def players
+      @state.players
+    end
+
+    def active_players
+      @state.active_players
     end
 
     def close
@@ -53,20 +62,19 @@ module Gaman
         @connection.puts('bye') { |c| logger.debug c }
         @connection.close
       end
+
       logger.debug { 'Disconnected from FIBS' }
     end
 
-    def motd
-      'This is the MOTD text.'
-    end
-
     def read
+      factory = MessageFactory.new
       input = ''
       loop do
         input += @connection.waitfor(/\n/)
         while input =~ /\n/
           line, input = input.split("\n", 2)
-          logger.debug { "Read thread received: #{line}" }
+          msg = factory.parse(line)
+          msg.update(@state) if msg
         end
       end
     end
