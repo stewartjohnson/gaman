@@ -11,7 +11,6 @@ module Gaman
 
   # Internal: Implements the console portion of the CLI.
   class Console < Curses::Window
-
     include Logging
 
     def setup

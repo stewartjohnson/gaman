@@ -11,11 +11,11 @@ module Gaman
                               # consumers should use #use
 
     attr_accessor :read_thread
-    attr_reader :connected
 
     def self.use(*options)
       fibs = new(*options)
       fibs.read_thread = Thread.new { fibs.read }
+      fibs.connect
       yield fibs
     ensure
       fibs.close
@@ -25,7 +25,6 @@ module Gaman
     def initialize(options)
       @username = options[:username]
       @password = options[:password]
-      logger.debug { "Connecting #{@username}/#{@password}" }
       @connection = begin
                       Net::Telnet.new 'Host' => 'fibs.com',
                                       'Port' => 4321,
@@ -38,15 +37,13 @@ module Gaman
 
     def connect
       return false if @connection.nil?
-
-      @connection.waitfor('String' => 'login:') { |c| logger.debug c }
-      @connection.cmd(
-                      'String' => "login Gaman 1008 #{@username} #{@password}",
-                      'Match' => /\n/) do |c|
-        logger.debug c
-      end
-      logger.debug { 'Logging in complete' }
+      # TODO: can we signal from the read thread to here?
+      @connection.puts("login Gaman 1008 #{@username} #{@password}")
       @connected = true
+    end
+
+    def connected?
+      !@connection.nil? && @connected
     end
 
     def close
@@ -63,13 +60,13 @@ module Gaman
       'This is the MOTD text.'
     end
 
-    private
-
     def read
+      input = ''
       loop do
-        break unless connected?
-        @connection.wait_for(/\n/) do |text|
-          logger.debug { "Read thread received: #{text[0..20]}" }
+        input += @connection.waitfor(/\n/)
+        while input =~ /\n/
+          line, input = input.split("\n", 2)
+          logger.debug { "Read thread received: #{line}" }
         end
       end
     end
