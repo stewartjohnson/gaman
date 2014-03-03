@@ -23,11 +23,13 @@ module Gaman
       refresh
 
       @ui_mode = ConsoleMode::None
+      @current_commands = []
       @result = ''
     end
 
     def commands(command_list)
       # TODO: handle two rows of commands properly
+      @current_commands = command_list
       @ui_mode = ConsoleMode::Command
       setpos 1, 0
       command_list.each do |cmd|
@@ -59,13 +61,13 @@ module Gaman
         # convert the char to the Command
         logger.debug { "console: received command key #{char}" }
         cmd = Command.from_key(char)
-        if cmd.nil?
-          logger.debug { 'console: command received was not valid' }
-          nil
-        else
+        if !cmd.nil? && @current_commands.include?(cmd)
           @ui_mode = ConsoleMode::None
           logger.debug { "console: command received was #{cmd}" }
           cmd
+        else
+          logger.debug { 'console: command received was not valid' }
+          nil
         end
       end
     end
