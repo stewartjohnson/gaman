@@ -62,6 +62,10 @@ module Gaman
       @input_queue << { type: :status, value: status_id }
     end
 
+    def title(text)
+      @input_queue << { type: :title, value: text }
+    end
+
     def enter_command_mode(*command_list)
       @input_queue << { type: :commands, value: command_list }
     end
@@ -99,6 +103,9 @@ module Gaman
           when :status # update the status line with a message
             logger.debug { "status update of #{task[:value]}" }
             @console.status task[:value]
+          when :title # update the text in the title bar
+            logger.debug { "changing title text to #{task[:value]}" }
+            @display.write_title task[:value]
           when :commands
             logger.debug { 'commands provided for display' }
             @console.clear

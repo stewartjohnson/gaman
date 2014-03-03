@@ -8,12 +8,7 @@ module Gaman
     include Logging
 
     def setup
-      attrset(Curses::A_REVERSE)
-      setpos 0, 0
-      addstr ' ' * maxx
-      setpos 0, 1
-      addstr "Gaman v#{Gaman::VERSION}"
-      attrset(Curses::A_NORMAL)
+      write_title
       self.timeout = 0
       self.keypad = true
       refresh
@@ -30,6 +25,18 @@ module Gaman
       refresh
     end
 
+    def write_title(text = "")
+      attrset(Curses::A_REVERSE)
+      setpos 0, 0
+      addstr ' ' * maxx
+      setpos 0, 1
+      addstr "Gaman v#{Gaman::VERSION}"
+      setpos 0, maxx-text.length-1
+      addstr(text)
+      attrset(Curses::A_NORMAL)
+      refresh
+    end
+
     def screen(screen_id)
       case screen_id
       when Screen::LOGIN
@@ -40,3 +47,4 @@ module Gaman
     end
   end
 end
+

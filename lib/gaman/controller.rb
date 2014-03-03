@@ -19,9 +19,14 @@ module Gaman
 
           ui.status Status::ATTEMPTING_CONNECTION
           Gaman::Fibs.use(username: username, password: password) do |fibs|
-            sleep 5
             if fibs.connected?
               ui.status Status::CONNECTED_SUCCESSFULLY
+              # TODO: could send of a separate thread to monitor fibs and
+              # update the title?
+              sleep 2
+              ui.title "#{fibs.username} " +
+                "Rating: #{fibs.user(:rating)} " +
+                "Experience: #{fibs.user(:experience)}"
             else
               # TODO: error details inserted
               ui.display Screen::CONNECTION_ERROR, fibs.last_error
@@ -29,6 +34,7 @@ module Gaman
               next # back to login screen
             end
             ui.enter_command_mode Command::QUIT # , Command::FILTER
+            sleep 5
             cmd = nil
             while cmd.nil?
               ui.display Screen::PlayerList, fibs.active_players

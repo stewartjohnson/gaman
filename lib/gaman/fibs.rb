@@ -39,12 +39,21 @@ module Gaman
     def connect
       return false if @connection.nil?
       # TODO: can we signal from the read thread to here?
-      @connection.puts("login Gaman 1008 #{@state.user(:username)} #{@state.user(:password)}")
+      @connection.puts("login Gaman 1008 #{@state.credentials}" +
+        "#{@state.user(:username)} #{@state.user(:password)}")
       @connected = true
     end
 
     def connected?
       !@connection.nil? && @connected
+    end
+
+    def username
+      @state.user(:username)
+    end
+
+    def user(key)
+      @state.user(key)
     end
 
     def players

@@ -63,6 +63,7 @@ module Gaman
       text = Status.text(status_id)
       setpos 0, (maxx - text.length) / 2
       addstr text
+      attrset(Curses::A_NORMAL)
       refresh
     end
 

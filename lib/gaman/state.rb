@@ -12,6 +12,10 @@ module Gaman
       @semaphore = Mutex.new
     end
 
+    def credentials
+      @semaphore.synchronize { "#{@user[:username]} #{@user[:password]}" }
+    end
+
     def motd
       @semaphore.synchronize { @motd }
     end
