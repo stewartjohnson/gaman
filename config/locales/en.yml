@@ -23,3 +23,6 @@ en:
   prompts:
     username: Please enter your FIBS username (Ctrl-C to cancel)
     password: Please enter your FIBS password (Ctrl-C to cancel)
+  statuses:
+    attempting_connection: Attempting connection to FIBS...
+    connected_successfully: Connected to FIBS successfully

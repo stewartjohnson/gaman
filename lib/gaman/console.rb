@@ -54,6 +54,22 @@ module Gaman
       refresh
     end
 
+    # Internal: Updates the status bar in the console to display a given
+    # message. The message is centred in the status bar line.
+    def status(status_id)
+      attrset Curses::A_REVERSE
+      setpos 0, 0
+      addstr ' ' * maxx
+      text = Status.text(status_id)
+      setpos 0, (maxx - text.length) / 2
+      addstr text
+      refresh
+    end
+
+    # Internal: Reads a command from the user (a single keystroke) and returns
+    # as the integer value of that comamnd, as defined by the Command module.
+    # The command will only be accepted if it is in the list of commands most
+    # recently provided by calling #enter_command_mode.
     def read_command
       return nil unless @ui_mode == ConsoleMode::Command
       char = getch

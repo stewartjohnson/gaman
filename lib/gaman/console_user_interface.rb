@@ -58,6 +58,10 @@ module Gaman
       @input_queue << { type: :display, value: screen_id }
     end
 
+    def status(status_id)
+      @input_queue << { type: :status, value: status_id }
+    end
+
     def enter_command_mode(*command_list)
       @input_queue << { type: :commands, value: command_list }
     end
@@ -92,6 +96,9 @@ module Gaman
           when :display # change the display
             logger.debug { "display requested of #{task[:value]}" }
             @display.screen task[:value]
+          when :status # update the status line with a message
+            logger.debug { "status update of #{task[:value]}" }
+            @console.status task[:value]
           when :commands
             logger.debug { 'commands provided for display' }
             @console.clear

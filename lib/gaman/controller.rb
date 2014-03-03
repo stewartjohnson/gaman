@@ -1,5 +1,6 @@
 require 'gaman/logging'
 require 'gaman/prompt'
+require 'gaman/status'
 require 'gaman/command'
 require 'gaman/console_user_interface'
 require 'gaman/fibs'
@@ -16,8 +17,9 @@ module Gaman
           username, password = prompt_credentials(ui)
           next if username.nil? || password.nil?
 
-          # ui.status Status::AttemptingConnection
+          ui.status Status::ATTEMPTING_CONNECTION
           Gaman::Fibs.use(username: username, password: password) do |fibs|
+            sleep 5
             if fibs.connected?
               ui.status Status::CONNECTED_SUCCESSFULLY
             else
@@ -26,7 +28,7 @@ module Gaman
               ui.enter_command_mode Command::RETRY, Command::QUIT
               next # back to login screen
             end
-            ui.commands Command::QUIT, Command::FILTER
+            ui.enter_command_mode Command::QUIT # , Command::FILTER
             cmd = nil
             while cmd.nil?
               ui.display Screen::PlayerList, fibs.active_players
