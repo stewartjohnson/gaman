@@ -103,8 +103,7 @@ module Gaman
           when :status # update the status line with a message
             logger.debug { "status update of #{task[:value]}" }
             @console.status task[:value]
-          when :title # update the text in the title bar
-            logger.debug { "changing title text to #{task[:value]}" }
+          when :title # set the text in the title bar
             @display.write_title task[:value]
           when :commands
             logger.debug { 'commands provided for display' }

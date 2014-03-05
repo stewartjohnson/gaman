@@ -2,6 +2,7 @@ require 'gaman/logging'
 require 'gaman/prompt'
 require 'gaman/status'
 require 'gaman/command'
+require 'gaman/screen'
 require 'gaman/console_user_interface'
 require 'gaman/fibs'
 
@@ -11,6 +12,7 @@ module Gaman
     include Logging
 
     def run
+      logger.debug { 'running' }
       Gaman::ConsoleUserInterface.use do |ui|
         loop do
           break unless display_welcome(ui)
@@ -21,12 +23,7 @@ module Gaman
           Gaman::Fibs.use(username: username, password: password) do |fibs|
             if fibs.connected?
               ui.status Status::CONNECTED_SUCCESSFULLY
-              # TODO: could send of a separate thread to monitor fibs and
-              # update the title?
-              sleep 2
-              ui.title "#{fibs.username} " +
-                "Rating: #{fibs.user(:rating)} " +
-                "Experience: #{fibs.user(:experience)}"
+              engage_listeners(fibs, ui)
             else
               # TODO: error details inserted
               ui.display Screen::CONNECTION_ERROR, fibs.last_error
@@ -34,16 +31,21 @@ module Gaman
               next # back to login screen
             end
             ui.enter_command_mode Command::QUIT # , Command::FILTER
-            sleep 5
-            cmd = nil
-            while cmd.nil?
-              ui.display Screen::PlayerList, fibs.active_players
-              cmd = ui.available_command
-            end
+            ui.command(true)
           end
-          sleep 10
           break
         end
+      end
+    end
+
+    def engage_listeners(fibs, ui)
+      # update the title whenever the user information changes or there is a
+      # change to the players on the system.
+      fibs.on_change(:user, :players) do |f|
+        ui.title "#{f.username} " +
+          "[#{f.active_players.count}] " +
+          "Rating: #{f.user(:rating)} " +
+          "Experience: #{f.user(:experience)}"
       end
     end
 

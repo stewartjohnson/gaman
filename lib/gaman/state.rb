@@ -6,10 +6,16 @@ module Gaman
   class State
     include Logging
 
-    def initialize(user_options)
+    def initialize(user_options, &listener)
       @user = user_options
       @players = {}
       @semaphore = Mutex.new
+      @listener = listener
+    end
+
+    # Internal: notify the listener that the subjects have changed.
+    def signal_change(*subjects)
+      @listener[subjects]
     end
 
     def credentials
@@ -26,6 +32,7 @@ module Gaman
 
     def update_user(user_options)
       @semaphore.synchronize { @user.merge!(user_options) }
+      signal_change(:user)
     end
 
     def user(key)
@@ -38,6 +45,7 @@ module Gaman
         @players[player_login].merge! player_options
         @players[player_login][:online] = true
       end
+      signal_change(:players)
     end
 
     def players

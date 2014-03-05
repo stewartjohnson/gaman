@@ -25,15 +25,27 @@ module Gaman
     end
 
     def initialize(user_options)
-      @state = Gaman::State.new(user_options)
+      @state = Gaman::State.new(user_options, &method(:receive_update))
+      @listeners = Hash.new { |hash, key| hash[key] = [] }
       @connection = begin
                       Net::Telnet.new 'Host' => 'fibs.com',
                                       'Port' => 4321,
+                                      'Timeout' => false,
                                       'Output_log' => 'fibs.log'
                     rescue
                       nil
                     end
       @connected = false
+    end
+
+    def on_change(*subjects, &block)
+      subjects.each { |subject| @listeners[subject] << block }
+    end
+
+    def receive_update(subjects)
+      subjects.each do |subj|
+        @listeners[subj].each { |lnr| lnr[self] }
+      end
     end
 
     def connect

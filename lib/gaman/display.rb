@@ -25,13 +25,14 @@ module Gaman
       refresh
     end
 
-    def write_title(text = "")
+    def write_title(text = '')
+      @title_text = text
       attrset(Curses::A_REVERSE)
       setpos 0, 0
       addstr ' ' * maxx
       setpos 0, 1
       addstr "Gaman v#{Gaman::VERSION}"
-      setpos 0, maxx-text.length-1
+      setpos 0, maxx - text.length - 1
       addstr(text)
       attrset(Curses::A_NORMAL)
       refresh
