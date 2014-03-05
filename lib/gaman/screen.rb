@@ -3,5 +3,6 @@ module Gaman
   # used by the console.
   class Screen
     LOGIN = 0
+    PLAYER_LIST = 1
   end
 end

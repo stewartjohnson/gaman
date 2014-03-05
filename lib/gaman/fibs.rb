@@ -30,7 +30,7 @@ module Gaman
       @connection = begin
                       Net::Telnet.new 'Host' => 'fibs.com',
                                       'Port' => 4321,
-                                      'Timeout' => false,
+                                      'Timeout' => 60,
                                       'Output_log' => 'fibs.log'
                     rescue
                       nil

@@ -54,8 +54,8 @@ module Gaman
       Curses.raw         # pass everything through to this program
     end
 
-    def display(screen_id)
-      @input_queue << { type: :display, value: screen_id }
+    def display(screen_id, data=nil)
+      @input_queue << { type: :display, value: screen_id, data: data }
     end
 
     def status(status_id)
@@ -99,7 +99,7 @@ module Gaman
           case task[:type]
           when :display # change the display
             logger.debug { "display requested of #{task[:value]}" }
-            @display.screen task[:value]
+            @display.screen task[:value], task[:data]
           when :status # update the status line with a message
             logger.debug { "status update of #{task[:value]}" }
             @console.status task[:value]

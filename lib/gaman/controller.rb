@@ -30,12 +30,21 @@ module Gaman
               ui.enter_command_mode Command::RETRY, Command::QUIT
               next # back to login screen
             end
-            ui.enter_command_mode Command::QUIT # , Command::FILTER
-            ui.command(true)
+            display_player_list(fibs, ui)
           end
           break
         end
       end
+    end
+
+    def display_player_list(fibs, ui)
+      fibs.on_change(:players) do |f|
+        logger.debug { 'block called to update player list' }
+        ui.display Screen::PLAYER_LIST, f.active_players
+      end
+      ui.display Screen::PLAYER_LIST, fibs.active_players
+      ui.enter_command_mode Command::QUIT # , Command::FILTER
+      ui.command(true)
     end
 
     def engage_listeners(fibs, ui)
