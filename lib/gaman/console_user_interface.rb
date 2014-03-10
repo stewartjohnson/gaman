@@ -19,6 +19,7 @@ module Gaman
     def self.use
       ui = new
       ui.thread = Thread.new { ui.run }
+      ui.thread.abort_on_exception = true
       yield ui
     ensure
       Thread.kill ui.thread

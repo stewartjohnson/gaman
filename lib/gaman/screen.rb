@@ -4,5 +4,7 @@ module Gaman
   class Screen
     LOGIN = 0
     PLAYER_LIST = 1
+    MAIN = 2
+    MESSAGING = 3
   end
 end

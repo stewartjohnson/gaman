@@ -2,6 +2,8 @@ module Gaman
   # Internal: Defines the different commands that can be offered to the user.
   module Command
     %w( quit
+        messaging
+        player_list
         invite
         login
         double

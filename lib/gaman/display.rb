@@ -39,10 +39,9 @@ module Gaman
     end
 
     def display_player_list(players)
-      logger { "updating display of players" }
       attrset(Curses::A_NORMAL)
       player_names = players.keys
-      sorted_player_names = player_names.sort do |a, b| 
+      sorted_player_names = player_names.sort do |a, b|
         # sort by rating by default
         players[b][:rating] <=> players[a][:rating]
       end
@@ -65,6 +64,10 @@ module Gaman
         display_message I18n.t(:welcome_text)
       when Screen::PLAYER_LIST
         display_player_list(data)
+      when Screen::MAIN
+        display_message I18n.t(:main_text)
+      when Screen::MESSAGING
+        display_shouts
       else
         fail ArgumentError, "Unknown screen #{screen_id}"
       end

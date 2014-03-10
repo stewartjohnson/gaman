@@ -1,7 +1,9 @@
 module Gaman
-  module Message
-    # Internal: Parses a FIBS OwnInfo message. Message is in the format:
+  module Clip
+    # Internal: Parses a FIBS OwnInfo CLIP message. Message is in the format:
+    #
     # myself 1 1 0 0 0 0 1 1 2396 0 1 0 1 3457.85 0 0 0 0 0 Australia/Melbourne
+    #
     #   name:       The login name you just logged in as.
     #   allowpip:   1 for yes, 0 for no.
     #   autoboard:  1 for yes, 0 for no.

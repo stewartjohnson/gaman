@@ -1,8 +1,9 @@
 require 'date'
 
 module Gaman
-  module Message
-    # Internal: Parses a FIBS Welcome message. Message is in the format:
+  module Clip
+    # Internal: Parses a FIBS Welcome CLIP message. Message is in the format:
+    #
     #     myself 1041253132 192.168.1.308
     #
     # myself        - username (not required)

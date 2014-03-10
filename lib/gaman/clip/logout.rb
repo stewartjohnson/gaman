@@ -1,7 +1,9 @@
 module Gaman
-  module Message
-    # Internal: Parses a FIBS Logout message. Message is in the format:
+  module Clip
+    # Internal: Parses a FIBS Logout CLIP message. Message is in the format:
+    #
     #  name message
+    #
     #  name:    name of the player that logged out.
     #  message: message that a normal user would see.
     class Logout

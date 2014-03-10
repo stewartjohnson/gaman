@@ -5,12 +5,23 @@ en:
                 Gaman is a console-based client for playing Backgammon on
                 FIBS: the First Internet Backgammon Server. To get started,
                 enter your login credentials for FIBS.
+  main_text: |+
+             Connected to FIBS. Please choose a command:
+             Q  Quit Gaman
+             P  View the Player List
+             M  View Messages (shouts, etc)
   exit_message: Thanks for playing on FIBS with Gaman!
   screen_size_error: Your screen is not large enough.
   commands:
     quit:
       key: Q
       label: Quit Gaman
+    messaging:
+      key: M
+      label: Messaging
+    player_list:
+      key: P
+      label: Player List
     login:
       key: L
       label: Enter FIBS Login

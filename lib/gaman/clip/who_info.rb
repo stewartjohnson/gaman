@@ -1,10 +1,12 @@
 require 'date'
 
 module Gaman
-  module Message
-    # Internal: Parses a FIBS WhoInfo message. Message is in the format:
+  module Clip
+    # Internal: Parses a FIBS WhoInfo CLIP message. Message is in the format:
+    #
     #   name opponent watching ready away rating experience idle login \
     #     hostname client email
+    #
     # name:       The login name for the user this line is referring to.
     # opponent:   The login name of the person the user is currently playing
     #             against, or a hyphen if they are not playing anyone.
