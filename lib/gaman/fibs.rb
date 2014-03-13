@@ -45,8 +45,8 @@ module Gaman
       subjects.each { |subject| @notify_blocks[subject] << block }
     end
 
-    def register_listener(listener, *subjects)
-      subjects.each { |subject| @listeners[subject] << listener }
+    def register_listener(subject, listener)
+      @listeners[subject] << listener
     end
 
     def connected?
@@ -82,6 +82,14 @@ module Gaman
       @connection.puts("tell #{name} #{message}")
     end
 
+    def whisper(message)
+      @connection.puts("whisper #{message}")
+    end
+
+    def kibitz(message)
+      @connection.puts("kibitz #{message}")
+    end
+
     def close
       logger.debug { 'Logging out' }
       unless @connection.nil?
@@ -114,15 +122,9 @@ module Gaman
       end
     end
 
-    # Internal: Receives notification from the State that data has changed for
-    # a set of subjects. Fibs will then notify clients by executing each of
-    # the blocks registered against each subject, and calling the #receive
-    # method on each of the listeners registered for each subject.
-    def receive_update(subjects)
-      subjects.each do |subj|
-        @notify_blocks[subj].each { |block| block[self, subj] }
-        @listeners[subj].each { |l| l.receive(self, subj) }
-      end
+    def receive_update(subject, payload)
+      @notify_blocks[subject].each { |block| block[subject, payload] }
+      @listeners[subject].each { |l| l.receive(subject, payload) }
     end
   end
 end

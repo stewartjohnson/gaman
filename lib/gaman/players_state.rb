@@ -8,7 +8,7 @@ module Gaman
         @players[player_login].merge! player_options
         @players[player_login][:online] = true
       end
-      signal_change(:players)
+      signal_change(:players, player_login => player_options)
     end
 
     def login(player_login)

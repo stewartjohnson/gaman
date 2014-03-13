@@ -12,7 +12,9 @@ module Gaman
 
     def add(options)
       logger.debug { "Creating message: #{options.inspect}" }
-      messages << Gaman::Message.new(options)
+      msg = Gaman::Message.new(options)
+      messages << msg
+      msg
     end
 
     # Internal: returns a list of messages that match the supplied options.

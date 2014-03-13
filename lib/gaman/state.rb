@@ -18,8 +18,8 @@ module Gaman
     end
 
     # Internal: notify the listener that the subjects have changed.
-    def signal_change(*subjects)
-      @listener[subjects]
+    def signal_change(subject, payload)
+      @listener[subject, payload]
     end
 
     def username
@@ -40,7 +40,7 @@ module Gaman
 
     def update_user(user_options)
       @semaphore.synchronize { @user.merge!(user_options) }
-      signal_change(:user)
+      signal_change(:user, @user)
     end
 
     def user(key)

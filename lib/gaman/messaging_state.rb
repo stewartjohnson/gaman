@@ -23,16 +23,16 @@ module Gaman
     end
 
     # Internal: indicates that we have sent a message of 'type'. Audience of
-    # the message is based on the type.
+    # the message (:to) is based on the type.
     def message_sent(type, text, to = nil)
-      message_db.add(
+      msg = message_db.add(
         type: type,
         to:   to,
         from: username,
         text: text,
         time: nil
         )
-      signal_change(type)
+      signal_change(type, msg)
     end
 
     # Internal: receive this to confirm a 'message' command worked
@@ -58,14 +58,14 @@ module Gaman
     # while ago and only just delivered to us (specified by the time
     # parameter).
     def message_received(type, from, text, time = nil)
-      message_db.add(
+      msg = message_db.add(
         type: type,
-        to:   username,
+        to:   type == :message ? username : nil,
         from: from,
         text: text,
         time: time
         )
-      signal_change(type)
+      signal_change(type, msg)
     end
 
     def messages(options)
