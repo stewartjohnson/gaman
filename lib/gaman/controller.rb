@@ -1,29 +1,60 @@
 require 'gaman/logging'
-require 'gaman/prompt'
-require 'gaman/status'
-require 'gaman/command'
-require 'gaman/screen'
-require 'gaman/console_user_interface'
 require 'gaman/fibs'
-require 'gaman/listener/messaging'
+require 'gaman/console/prompt'
+require 'gaman/console/status'
+require 'gaman/console/command'
+require 'gaman/console/screen'
+require 'gaman/console/user_interface'
+require 'gaman/console/view/login'
+require 'gaman/console/view/welcome'
+require 'gaman/console/view/messaging'
+require 'gaman/console/view/players'
 
 module Gaman
   # Internal: The main controller class for CLI gaman.
   class Controller
     include Logging
 
+    # rubocop:disable all
     def run
-      logger.debug { 'running' }
-      Gaman::ConsoleUserInterface.use do |ui|
-        loop do
-          break unless display_welcome(ui)
-          username, password = prompt_credentials(ui)
-          next if username.nil? || password.nil?
 
-          messaging_listener = Listener::Messaging.new(ui)
+      Gaman::Console::UserInterface.use do |ui|
+        # these are inactive by default
+        login_display = Gaman::Console::View::Login.new(ui)
+        welcome_display = Gaman::Console::View::Welcome.new(ui)
+        messaging_display = Gaman::Console::View::Messaging.new(ui)
+        players_display = Gaman::Console::View::Players.new(ui)
+
+        loop do
+          login_display.activate
+          action = login_display.next_action
+          break if action.quit?
+          username, password = login_display.credentials if action.login?
+          login_display.deactivate
 
           ui.status Status::ATTEMPTING_CONNECTION
+
+          # TODO: throw exceptions when not connected and fibs is used.
           Gaman::Fibs.use(username: username, password: password) do |fibs|
+
+            fibs.register_listener(messaging_display, :messages)
+            fibs.register_listener(players_display, :players)
+
+            display = welcome_display
+            display.activate
+            loop do
+              new_display = case active_display.next_action
+                            when action.quit? then nil
+                            when action.main? then welcome_display
+                            when action.messaging? then messaging_display
+                            when action.players_list? then players_display
+                            end
+              display.deactivate
+              display = new_display
+              display.activate
+            end
+
+
             if fibs.connected?
               fibs.register_listener(messaging_listener, :messages)
               ui.status Status::CONNECTED_SUCCESSFULLY
@@ -33,16 +64,6 @@ module Gaman
               ui.display Screen::CONNECTION_ERROR, fibs.last_error
               ui.enter_command_mode Command::RETRY, Command::QUIT
               next # back to login screen
-            end
-            # this is a bit hacky, but it's good enough while i'm working on
-            # the fibs engine.
-            case display_main_screen(fibs, ui)
-            when Command::QUIT
-              break
-            when Command::MESSAGING
-              messaging_listener.enable
-            when Command::PLAYER_LIST
-              display_player_list(fibs, ui)
             end
           end
           break
