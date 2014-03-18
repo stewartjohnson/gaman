@@ -1,7 +1,7 @@
 require 'logger'
 
 module Gaman
-  # Internal: implements logging for this codebase.
+  # @api private
   module Logging
     def logger
       Logging.logger

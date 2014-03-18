@@ -1,4 +1,5 @@
 module Gaman
+  # @api private
   module Clip
     # Internal: Parses a FIBS Kibitzes CLIP message, which indicates that
     # someone has said something to all players and watchers of a particular
