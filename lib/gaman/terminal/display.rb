@@ -1,11 +1,11 @@
 require 'curses'
 require 'gaman/logging'
-require 'gaman/screen'
+require 'gaman/terminal/screen'
 
-module Gaman
+module Gaman::Terminal
   # Internal: Implements the 'display' part of the CLI window.
   class Display < Curses::Window
-    include Logging
+    include Gaman::Logging
 
     def setup
       write_title
@@ -74,4 +74,3 @@ module Gaman
     end
   end
 end
-

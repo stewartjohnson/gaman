@@ -1,12 +1,12 @@
 #!/usr/bin/env ruby
 
 require 'gaman'
-require 'gaman/controller'
+require 'gaman/terminal/controller'
 require 'i18n'
 
 I18n.load_path = Dir[File.expand_path('../../config/locales/*.yml', __FILE__)]
 I18n.enforce_available_locales = false
 
-Gaman::Controller.new.run
+Gaman::Terminal::Controller.new.run
 
 puts I18n.t(:exit_message)

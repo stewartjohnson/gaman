@@ -1,16 +1,16 @@
 require 'curses'
-require 'gaman/console'
-require 'gaman/display'
-require 'gaman/command'
+require 'gaman/terminal/console'
+require 'gaman/terminal/display'
+require 'gaman/terminal/command'
 require 'gaman/logging'
 
-module Gaman
+module Gaman::Terminal
   # Internal: The CLI-based user interface for Gaman.
-  class ConsoleUserInterface
+  class UserInterface
     MIN_ROWS = 40
     MIN_COLS = 80
 
-    include Logging
+    include Gaman::Logging
 
     attr_accessor :thread
 
