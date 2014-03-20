@@ -1,8 +1,10 @@
 require 'gaman/terminal/command'
+require 'gaman/logging'
 
 module Gaman::Terminal::View
   class Login
     include Gaman::Terminal
+    include Gaman::Logging
 
     def initialize(ui)
       @ui = ui
@@ -10,7 +12,10 @@ module Gaman::Terminal::View
     end
 
     def activate
-      @ui.display Screen::LOGIN
+      logger.debug { 'calling dialog' }
+      @ui.dialog text:   I18n.t(:welcome_text),
+                 width:  60,
+                 height: 10
     end
 
     def next_action

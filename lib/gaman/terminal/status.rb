@@ -5,6 +5,7 @@ module Gaman
     module Status
       %w( attempting_connection
           connected_successfully
+          choose_command
           ).each_with_index do |status, i|
         const_set(status.upcase, i)
       end
